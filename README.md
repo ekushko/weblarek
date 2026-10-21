@@ -98,3 +98,103 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
+## Данные
+
+### Модели данных
+
+#### Интерфейс Product
+
+```
+interface IProduct {
+  id: string;
+  description: string;
+  image: string;
+  title: string;
+  category: string;
+  price: number | null;
+}
+```
+
+#### Интерфейс Buyer
+
+```
+interface IBuyer {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+}
+```
+
+#### Класс Products
+Класс, предназначенный для хранения товаров, которые можно купить в приложении.
+
+Конструктор класса:
+`constructor(productList: IProduct[] = [], selectedProduct: IProduct | null = null)` - позволяет проинициализировать поля класса
+
+Поля класса:
+`_items: IProduct[]` - хранит массив всех товаров.
+`_selectedItem = selectedProduct` - хранит товар, выбранный для подробного отображения.
+
+Методы класса:
+`set items(list: IProduct[])` - сохранение массива товаров полученного в параметрах метода.
+`get items(): IProduct[]` - получение массива товаров из модели.
+`item(id: string): IProduct | undefined` - получение одного товара по его id.
+`set selectedItem(item : IProduct | null)` - сохранение товара для подробного отображения.
+`get selectedItem() : IProduct | null` - получение товара для подробного отображения.
+
+#### Класс Basket
+Класс, предназначенный для хранения товаров, которые пользователь выбрал для покупки.
+
+Конструктор класса:
+`constructor(items: IProduct[] = [])` - позволяет проинициализировать поля класса
+
+Поля класса:
+`_items : IProduct[]` - хранит массив товаров, выбранных покупателем для покупки.
+
+Методы класса:
+`get items(): IProduct[]` - получение массива товаров, которые находятся в корзине.
+`add(item: IProduct)` - добавление товара, который был получен в параметре, в массив корзины.
+`remove(item: IProduct)` - удаление товара, полученного в параметре из массива корзины.
+`erase()` - очистка корзины.
+`total(): number` - получение стоимости всех товаров в корзине.
+`count(): number` - получение количества товаров в корзине.
+`contains(id: string)` - проверка наличия товара в корзине по его id, полученного в параметр метода.
+
+#### Класс Buyer
+Класс, предназначенный для хранения данных покупателя, которые тот должен указать при оформлении заказа.
+
+Конструктор класса:
+`constructor(payment: TPayment = '', email: string = '', phone: string = '', address: string = '')` - позволяет проинициализировать поля класса
+
+Поля класса:
+`_payment: TPayment` - вид оплаты.
+`_email: string` - адреc.
+`_phone: string` - телефон.
+`_address: string` - email.
+
+Методы класса:
+`fromData(data: IBuyer)` - сохранение данных в модели.
+`get payment(): TPayment` - получение способа оплаты покупателя.
+`get email(): string` - получение e-mail покупателя.
+`get phone(): string` - получение номера телефона покупателя.
+`get address(): string` - получение адреса покупателя.
+`set payment(value: TPayment)` - установка способа оплаты покупателя.
+`set email(value: string)` - установка e-mail покупателя.
+`set phone(value: string)` - установка номера телефона покупателя.
+`set address(value: string)` - установка адреса покупателя.
+`erase()` - очистка данных покупателя.
+`validate(): TBuyerValidationResult` - валидация данных.
+
+### Слой коммуникации
+
+#### Класс ApiAdapter
+Класс, предназначенный для конкретизированного взаимодействия с API.
+
+Конструктор класса не принимает параметров.
+
+Поля класса:
+`private _api : Api = new Api(import.meta.env.VITE_API_ORIGIN)` - объект API.
+
+Методы класса:
+`async getProducts(): Promise<IProduct[]>` - получение массива товаров с сервера.
