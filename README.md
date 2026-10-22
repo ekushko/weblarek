@@ -102,7 +102,42 @@ Presenter - презентер содержит основную логику п
 
 ### Модели данных
 
+#### Тип ApiPostMethods
+Поддерживаемые API методы POST-запросов.
+
+```
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+```
+
+#### Интерфейс IApi
+Интерфейс, который должен предоставлять API (отправка get-запроса, отправка post-запроса).
+
+```
+export interface IApi {
+  get<T extends object>(uri: string): Promise<T>;
+  post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+}
+```
+
+#### Интерфейс IApiProductsResponse
+Интерфейс, который должен предоставлять ответ API на запрос каталога товаров (итоговая стоимость и массив товаров).
+
+```
+export interface IApiProductsResponse {
+    total: number;
+    items: IProduct[];
+}
+```
+
+#### Тип TPayment
+Способы оплаты (наличными/по карте/отсутствует).
+
+```
+export type TPayment = 'cash' | 'card' | '';
+```
+
 #### Интерфейс Product
+Интерфейс, который должен предоставлять товар (идентификатор, описание, ссылка на изображение, заголовок, категория и стоимость).
 
 ```
 interface IProduct {
@@ -116,6 +151,7 @@ interface IProduct {
 ```
 
 #### Интерфейс Buyer
+Интерфейс, который должен предоставлять объект, предоставляющий информацию о покупателе (способ оплаты, электронная почта, номер телефона и адрес).
 
 ```
 interface IBuyer {
@@ -126,11 +162,17 @@ interface IBuyer {
 }
 ```
 
+#### Тип TBuyerValidationResult
+Результат валидации информации о покупателе.
+
+```
+export type TBuyerValidationResult = Partial<Record<keyof IBuyer, string>>;
+```
+
 #### Класс Products
 Класс, предназначенный для хранения товаров, которые можно купить в приложении.
 
-Конструктор класса:
-`constructor(productList: IProduct[] = [], selectedProduct: IProduct | null = null)` - позволяет проинициализировать поля класса
+Конструктор класса не принимает параметров.
 
 Поля класса:
 `_items: IProduct[]` - хранит массив всех товаров.
@@ -146,8 +188,7 @@ interface IBuyer {
 #### Класс Basket
 Класс, предназначенный для хранения товаров, которые пользователь выбрал для покупки.
 
-Конструктор класса:
-`constructor(items: IProduct[] = [])` - позволяет проинициализировать поля класса
+Конструктор класса не принимает параметров.
 
 Поля класса:
 `_items : IProduct[]` - хранит массив товаров, выбранных покупателем для покупки.
@@ -155,7 +196,7 @@ interface IBuyer {
 Методы класса:
 `get items(): IProduct[]` - получение массива товаров, которые находятся в корзине.
 `add(item: IProduct)` - добавление товара, который был получен в параметре, в массив корзины.
-`remove(item: IProduct)` - удаление товара, полученного в параметре из массива корзины.
+`remove(id: string)` - удаление товара, полученного в параметре из массива корзины.
 `erase()` - очистка корзины.
 `total(): number` - получение стоимости всех товаров в корзине.
 `count(): number` - получение количества товаров в корзине.
@@ -164,8 +205,7 @@ interface IBuyer {
 #### Класс Buyer
 Класс, предназначенный для хранения данных покупателя, которые тот должен указать при оформлении заказа.
 
-Конструктор класса:
-`constructor(payment: TPayment = '', email: string = '', phone: string = '', address: string = '')` - позволяет проинициализировать поля класса
+Конструктор класса не принимает параметров.
 
 Поля класса:
 `_payment: TPayment` - вид оплаты.
@@ -174,15 +214,12 @@ interface IBuyer {
 `_address: string` - email.
 
 Методы класса:
-`fromData(data: IBuyer)` - сохранение данных в модели.
+`toData(): Partial<IBuyer>` - сохранение данных в модели.
+`fromData(data: Partial<IBuyer>)` - получение данных из модели.
 `get payment(): TPayment` - получение способа оплаты покупателя.
 `get email(): string` - получение e-mail покупателя.
 `get phone(): string` - получение номера телефона покупателя.
 `get address(): string` - получение адреса покупателя.
-`set payment(value: TPayment)` - установка способа оплаты покупателя.
-`set email(value: string)` - установка e-mail покупателя.
-`set phone(value: string)` - установка номера телефона покупателя.
-`set address(value: string)` - установка адреса покупателя.
 `erase()` - очистка данных покупателя.
 `validate(): TBuyerValidationResult` - валидация данных.
 
@@ -191,10 +228,11 @@ interface IBuyer {
 #### Класс ApiAdapter
 Класс, предназначенный для конкретизированного взаимодействия с API.
 
-Конструктор класса не принимает параметров.
+Конструктор:  
+`constructor(api: IApi)` - В конструктор передается объект, реализующий базовую логику отправки запросов.
 
 Поля класса:
-`private _api : Api = new Api(import.meta.env.VITE_API_ORIGIN)` - объект API.
+`private _api : IApi` - объект, реализующий базовую логику отправки запросов.
 
 Методы класса:
 `async getProducts(): Promise<IProduct[]>` - получение массива товаров с сервера.

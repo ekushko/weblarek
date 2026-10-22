@@ -1,12 +1,7 @@
-import { IProduct } from "..";
-
+import { IProduct } from "../../types";
 
 export class Basket {
-    private _items : IProduct[];
-
-    constructor(items: IProduct[] = []) {
-        this._items = items;
-    }
+    private _items: IProduct[] = [];
 
     get items(): IProduct[] {
         return this._items;
@@ -16,11 +11,17 @@ export class Basket {
         this._items.push(item);
     }
 
-    remove(item: IProduct) {
-        const index = this._items.indexOf(item);
+    remove(id: string) {
+        const itemToRemove = this._items.find(item => {
+            return item.id === id;
+        });
 
-        if (index >= 0) {
-            this._items.splice(index, 1);
+        if (itemToRemove !== undefined) {
+            const index = this._items.indexOf(itemToRemove);
+
+            if (index >= 0) {
+                this._items.splice(index, 1);
+            }
         }
     }
 
