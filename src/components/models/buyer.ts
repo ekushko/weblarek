@@ -47,7 +47,7 @@ export class Buyer {
 
     validate(): TBuyerValidationResult {
         let validationResult: TBuyerValidationResult = {};
-        if (this._payment === null || this._payment.trim().length === 0) {
+        if (this._payment === null) {
             validationResult.payment = 'Не указан способ оплаты';
         } 
         if (this._email.trim().length === 0) {

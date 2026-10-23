@@ -127,8 +127,12 @@ async function testApiAdapter() {
     const api = new Api(API_URL);
     const apiAdapterModel = new ApiAdapter(api);
     const productsModel = new Products();
-    productsModel.items = (await apiAdapterModel.getProducts()).items;
-    console.log('Массив товаров из каталога: ', productsModel.items);
+    try {
+        productsModel.items = (await apiAdapterModel.getProducts()).items;
+        console.log('Массив товаров из каталога: ', productsModel.items);
+    } catch (error) {
+        console.error('Не удалось загрузить каталог:', error);
+    }
 }
 
 testProducts();

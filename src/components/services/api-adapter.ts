@@ -9,20 +9,10 @@ export class ApiAdapter {
     }
 
     async getProducts(): Promise<IApiProductsResponse> {
-        try {
-            return (await this._api.get<IApiProductsResponse>('/product'));
-        } catch (err) {
-            console.error('Ошибка:', err);
-        }
-        return { total: 0, items: [] };
+        return (await this._api.get<IApiProductsResponse>('/product'));
     }
 
     async postOrder(order: IOrder): Promise<IOrderResult> {
-        try {
-            return (await this._api.post<IOrderResult>('/order', order, 'POST'));
-        } catch (err) {
-            console.error('Ошибка:', err);
-        }
-        return { id: '', total: 0 };
+        return (await this._api.post<IOrderResult>('/order', order, 'POST'));
     }
 }
