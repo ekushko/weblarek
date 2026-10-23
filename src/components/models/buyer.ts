@@ -1,12 +1,12 @@
 import { TPayment, IBuyer, TBuyerValidationResult } from "../../types";
 
 export class Buyer {
-    private _payment: TPayment = '';
+    private _payment: TPayment | null = null;
     private _email: string = '';
     private _phone: string = '';
     private _address: string = '';
 
-    get payment(): TPayment {
+    get payment(): TPayment | null {
         return this._payment;
     }
 
@@ -47,7 +47,7 @@ export class Buyer {
 
     validate(): TBuyerValidationResult {
         let validationResult: TBuyerValidationResult = {};
-        if (this._payment.trim().length === 0) {
+        if (this._payment === null || this._payment.trim().length === 0) {
             validationResult.payment = 'Не указан способ оплаты';
         } 
         if (this._email.trim().length === 0) {
@@ -63,7 +63,7 @@ export class Buyer {
     }
 
     erase() {
-        this._payment = '';
+        this._payment = null;
         this._email = '';
         this._phone = '';
         this._address = '';

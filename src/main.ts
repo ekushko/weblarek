@@ -5,7 +5,7 @@ import { Basket } from './components/models/basket';
 import { Buyer } from './components/models/buyer';
 import { API_URL } from './utils/constants';
 import { Api } from './components/base/Api';
-import { ApiAdapter } from './components/models/api-adapter';
+import { ApiAdapter } from './components/services/api-adapter';
 import { apiProducts } from './utils/data';
 
 
@@ -67,7 +67,7 @@ function testBasket() {
 
     // тестирование получения количества и стоимости всех товаров
     {
-        console.log('В корзине товаров: ', basketModel.count, ' на сумму: ', basketModel.total);
+        console.log('В корзине товаров: ', basketModel.count(), ' на сумму: ', basketModel.total());
     }
 
     // тестирование очистки корзины
@@ -108,6 +108,14 @@ function testBuyer() {
         console.log('Данные о покупателе: ', buyerModel.toData());
     }
 
+    // тестирование геттеров
+    {
+        console.log('Способ оплаты покупателя: ', buyerModel.payment);
+        console.log('Электронная почта покупателя: ', buyerModel.email);
+        console.log('Телефон покупателя: ', buyerModel.phone);
+        console.log('Адрес покупателя: ', buyerModel.address);
+    }
+
     // тестирование очистки данных покупателя
     {
         buyerModel.erase();
@@ -116,9 +124,10 @@ function testBuyer() {
 }
 
 async function testApiAdapter() {
-    const apiAdapterModel = new ApiAdapter(new Api(`${API_URL}`));
+    const api = new Api(API_URL);
+    const apiAdapterModel = new ApiAdapter(api);
     const productsModel = new Products();
-    productsModel.items = await apiAdapterModel.getProducts();
+    productsModel.items = (await apiAdapterModel.getProducts()).items;
     console.log('Массив товаров из каталога: ', productsModel.items);
 }
 

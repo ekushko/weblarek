@@ -169,6 +169,26 @@ interface IBuyer {
 export type TBuyerValidationResult = Partial<Record<keyof IBuyer, string>>;
 ```
 
+#### Интерфейс IOrder
+Интерфейс, который должен предоставлять заказ (массив идентификаторов товаров, итоговая стоимость)
+
+```
+export interface IOrder extends IBuyer {
+  items: string[];
+  total: number;
+}
+```
+
+#### Интерфейс IOrderResult
+Интерфейс, который должен предоставлять результат отправки заказа (идентификатор заказа, итоговая сумма)
+
+```
+export interface IOrderResult {
+  id: string;
+  total: number;
+}
+```
+
 #### Класс Products
 Класс, предназначенный для хранения товаров, которые можно купить в приложении.
 
@@ -236,3 +256,4 @@ export type TBuyerValidationResult = Partial<Record<keyof IBuyer, string>>;
 
 Методы класса:
 `async getProducts(): Promise<IProduct[]>` - получение массива товаров с сервера.
+`async postOrder(order: IOrder): Promise<IOrderResult>` - отправка заказа на сервер.

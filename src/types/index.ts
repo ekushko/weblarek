@@ -10,7 +10,7 @@ export interface IApiProductsResponse {
     items: IProduct[];
 }
 
-export type TPayment = 'cash' | 'card' | '';
+export type TPayment = 'cash' | 'card';
 
 export interface IProduct {
   id: string;
@@ -22,10 +22,20 @@ export interface IProduct {
 }
 
 export interface IBuyer {
-  payment: TPayment;
+  payment: TPayment | null;
   email: string;
   phone: string;
   address: string;
 }
 
 export type TBuyerValidationResult = Partial<Record<keyof IBuyer, string>>;
+
+export interface IOrder extends IBuyer {
+  items: string[];
+  total: number;
+}
+
+export interface IOrderResult {
+  id: string;
+  total: number;
+}
